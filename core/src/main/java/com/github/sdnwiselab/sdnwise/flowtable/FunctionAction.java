@@ -50,6 +50,7 @@ public final class FunctionAction extends AbstractAction {
      * @param str the String representing the action
      */
     public FunctionAction(final String str) {
+        
         super(FUNCTION, 0);
         String[] tmp = str.split(" ");
         if (tmp[0].equals(FUNCTION.name())) {

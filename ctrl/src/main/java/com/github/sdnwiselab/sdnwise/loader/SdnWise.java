@@ -184,7 +184,7 @@ public final class SdnWise {
                     (byte) 1,
                     new NodeAddress("0.8"),
                     (byte) 1,
-                    "HelloWorld.class");
+                    "DataManager.class");
 
             // controller.addNodeFunction(
             //         (byte) 1,
@@ -259,7 +259,11 @@ public final class SdnWise {
                     BASE_NODE_PORT + i,
                     // neigh file
                     "Node" + i + ".txt",
-                    "FINEST")).start();
+                    // log level
+                    "FINEST",
+                    // index
+                    i
+                    )).start();
         }
     }
 

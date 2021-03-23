@@ -49,6 +49,8 @@ import static com.github.sdnwiselab.sdnwise.flowtable.Window.W_SIZE_2;
 import static com.github.sdnwiselab.sdnwise.flowtable.Window.fromString;
 import com.github.sdnwiselab.sdnwise.function.FunctionInterface;
 import com.github.sdnwiselab.sdnwise.mote.battery.Dischargeable;
+import com.github.sdnwiselab.sdnwise.mote.standalone.SensorData;
+
 import static com.github.sdnwiselab.sdnwise.mote.core.Constants.ENTRY_TTL_DECR;
 import static com.github.sdnwiselab.sdnwise.mote.core.Constants.SDN_WISE_DFLT_CNT_BEACON_MAX;
 import static com.github.sdnwiselab.sdnwise.mote.core.Constants.SDN_WISE_DFLT_CNT_REPORT_MAX;
@@ -113,10 +115,6 @@ public abstract class AbstractCore {
      * Battery.
      */
     private final Dischargeable battery;
-    /**
-     * Sensor Type.
-     */
-    private final String sensorType;
     /**
      * Timers.
      */
@@ -192,7 +190,7 @@ public abstract class AbstractCore {
     /**
      * Simulates sensor readings.
      */
-    private final HashMap<String, Object> sensors = new HashMap<>();
+    private HashMap<String, List<Object>> sensors = new HashMap<String, List<Object>>();
     /**
      * Status Registers.
      */
@@ -204,19 +202,36 @@ public abstract class AbstractCore {
             = new ArrayBlockingQueue<>(QUEUE_SIZE);
 
     /**
-     * Creates the core of the node.
+     * Creates the core of the node without sensor measurements
      *
      * @param net Network ID of the node
      * @param address Node address of the node
      * @param bat models the battery of the node
      */
     AbstractCore(final byte net, final NodeAddress address,
-            final Dischargeable bat, final String type) {
+            final Dischargeable bat) {
         myAddress = address;
         myNet = net;
         battery = bat;
-        sensorType = type;
     }
+
+    /**
+     * Creates the core of the node without sensor measurements
+     *
+     * @param sensors sensor measurements of the node
+     * @param net Network ID of the node
+     * @param address Node address of the node
+     * @param bat models the battery of the node
+     */
+    AbstractCore(final HashMap<String, List<Object>> sensorsData, 
+            final byte net, final NodeAddress address,
+            final Dischargeable bat) {
+        sensors = sensorsData;
+        myAddress = address;
+        myNet = net;
+        battery = bat;
+    }
+
 
     /**
      * Gets the battery.
@@ -1132,7 +1147,6 @@ public abstract class AbstractCore {
                 rule.addWindow(new Window().setOperator(EQUAL).setSize(W_SIZE_2)
                         .setLhsLocation(PACKET).setLhs(DST_INDEX)
                         .setRhsLocation(CONST).setRhs(path.get(0).intValue()));
-                        logLevel
                 rule.getWindows().addAll(packet.getWindows());
                 rule.addAction(new ForwardUnicastAction(path.get(i - 1)));
                 insertRule(rule);
@@ -1300,7 +1314,7 @@ public abstract class AbstractCore {
      * sensors.
      * @return an HashMap containing the measured values
      */
-    public final HashMap<String, Object> getSensors() {
+    public final HashMap<String, List<Object>> getSensors() {
 
         return sensors;
     }

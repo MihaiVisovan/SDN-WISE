@@ -33,8 +33,19 @@ import static com.github.sdnwiselab.sdnwise.packet.NetworkPacket.DFLT_TTL_MAX;
 import static com.github.sdnwiselab.sdnwise.packet.NetworkPacket.DST_INDEX;
 import com.github.sdnwiselab.sdnwise.util.Neighbor;
 import com.github.sdnwiselab.sdnwise.util.NodeAddress;
+import com.github.sdnwiselab.sdnwise.mote.standalone.SensorData;
+
+
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Scanner;
 import java.util.logging.Level;
+
+import javax.swing.text.StyledEditorKit.BoldAction;
 
 /**
  * @author Sebastiano Milardo
@@ -42,15 +53,87 @@ import java.util.logging.Level;
 public class MoteCore extends AbstractCore {
 
     /**
+     * Sensor measurements
+     */
+    private final static HashMap<String, List<Object>> sensors = new HashMap<String, List<Object>>();
+
+    /**
+     * Mote index
+     */
+    private int index;
+
+    /**
      * Creates the core of a mote.
-     *
+     * @param sensors the measurements of the mote
      * @param net the network id of the mote
      * @param na the node address of the node
      * @param battery the battery of the node
      */
     public MoteCore(final byte net, final NodeAddress na,
-            final Dischargeable battery) {
-        super(net, na, battery);
+            final Dischargeable battery, final int index) {
+        super(sensors, net, na, battery);
+        this.index = index;
+        addMeasurementKeys();
+        new Thread(new ReadSensorData()).start();
+    }
+
+    private class ReadSensorData implements Runnable {
+        @Override
+        public void run() {
+            File myObj = null;
+            Scanner myReader = null;
+            try {
+                myObj = new File("/home/mihai/sdn-wise-java/data/src/main/resources/sensor_data_" + index + ".txt");
+                myReader = new Scanner(myObj);
+                
+              } catch (FileNotFoundException e) {
+                System.out.println("An error occurred.");
+                e.printStackTrace();
+              }
+              
+            while (myReader.hasNextLine()) 
+            {
+                String data = myReader.nextLine();
+                String[] splittedData = data.split("\t");
+                String date = splittedData[0];
+                String time = splittedData[1];
+                String epoch = splittedData[2];
+                String temperature = splittedData[4];
+                String humidity = splittedData[5];
+                String light = splittedData[6];
+                String voltage = splittedData[7];
+
+                Object o1 = new SensorData("temperature", temperature, date, time, epoch);
+                Object o2 = new SensorData("humidity", humidity, date, time, epoch);
+                Object o3 = new SensorData("light", light, date, time, epoch);
+                Object o4 = new SensorData("voltage", voltage, date, time, epoch);
+
+            
+                sensors.get("temperature").add(o1);
+                sensors.get("humidity").add(o2);
+                sensors.get("light").add(o3);
+                sensors.get("voltage").add(o4);
+
+                // System.out.println("Index: " + index + " measured values: " + sensors.get("temperature") + '\n');
+
+                try {
+                    Thread.sleep(31000);
+                } 
+                catch (InterruptedException e) 
+                {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+            }
+            myReader.close();
+        }
+    }
+
+    public final void addMeasurementKeys(){
+        this.sensors.put("temperature", new ArrayList());
+        this.sensors.put("humidity", new ArrayList());
+        this.sensors.put("light", new ArrayList());
+        this.sensors.put("voltage", new ArrayList());
     }
 
     @Override

@@ -58,8 +58,6 @@ public class SimplerFormatter extends Formatter {
         sb.append(" [").append(record.getLevel()).append("][").append(name)
                 .append("] ").append(formatMessage(record));
 
-        System.out.println("----------------" + record.getLevel() + " " + formatMessage((record)) + "--------------");
-
         if (record.getThrown() != null) {
             StringWriter sw = new StringWriter();
             PrintWriter pw = new PrintWriter(sw);
