@@ -114,8 +114,9 @@ public final class Loader {
                                 .parseInt(ipport[1])), cmdTopo, cmdLevel,
                         cmdSDpid, cmdSMac, cmdSPort));
             } else {
+                    // TO DO: remove 1
                 th = new Thread(new Mote(cmdNet, cmdAddress, cmdPort, cmdTopo,
-                        cmdLevel));
+                        cmdLevel, 1));
             }
             th.start();
             th.join();

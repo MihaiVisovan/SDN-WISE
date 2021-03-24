@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ArrayBlockingQueue;
 
+
 /**
  * @author Sebastiano Milardo
  */
@@ -51,7 +52,7 @@ public interface FunctionInterface {
      * @param np the NetworkPacket that triggered this function.
      */
     void function(
-            HashMap<String, Object> adcRegister,
+            HashMap<String, List<Object>> adcRegister,
             List<FlowTableEntry> flowTable,
             Set<Neighbor> neighborTable,
             ArrayList<Integer> statusRegister,
