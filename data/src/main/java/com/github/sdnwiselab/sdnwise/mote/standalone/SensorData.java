@@ -1,8 +1,14 @@
 package com.github.sdnwiselab.sdnwise.mote.standalone;
 
+import java.time.LocalDateTime;
+
 public class SensorData {
     
-    public final String type, value, date, time, epoch;
+    public final LocalDateTime dateTime;
+    public final String type;
+    public final double value;
+    public final int epoch;
+    
      /**
      * Sensor data object
      *
@@ -15,21 +21,40 @@ public class SensorData {
 
     public SensorData(
         final String type,
-        final String value,
-        final String date,
-        final String time,
-        final String epoch
+        final double value,
+        final LocalDateTime dateTime,
+        final int epoch
         )
     {
        this.type = type;
        this.value = value;
-       this.date = date;
-       this.time = time;
+       this.dateTime = dateTime;
        this.epoch = epoch;
     }
 
     @Override
     public String toString() {
-        return "Measurement: " + type + " value: " + value + "date: " + date + " time: " + time + " epoch: " + epoch + '\n';
+        return '\n' + "Value: " 
+                + value 
+                + "; DateTime: " 
+                + dateTime 
+                + "; Epoch: " 
+                + epoch;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public double getValue() {
+        return value;
+    }
+
+    public int getEpoch() {
+        return epoch;
+    }
+
+    public LocalDateTime getDateTime() {
+        return dateTime;
     }
 }

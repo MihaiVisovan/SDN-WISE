@@ -81,9 +81,12 @@ import com.github.sdnwiselab.sdnwise.util.NodeAddress;
 import static com.github.sdnwiselab.sdnwise.util.Utils.mergeBytes;
 import static com.github.sdnwiselab.sdnwise.util.Utils.splitInteger;
 import java.nio.ByteBuffer;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -621,7 +624,7 @@ public abstract class AbstractCore {
                     if (srvI != null) {
 
                         log(Level.INFO, "Function called: " + myAddress);
-                        srvI.function(sensors, flowTable, neighborTable,
+                        srvI.function(this, sensors, flowTable, neighborTable,
                                 statusRegister, acceptedId, ftQueue, txQueue,
                                 ftac.getArgs(), np);
                     }
@@ -1315,8 +1318,49 @@ public abstract class AbstractCore {
      * @return an HashMap containing the measured values
      */
     public final HashMap<String, List<Object>> getSensors() {
-
         return sensors;
+    }
+
+    /**
+     * Gets a list of objects that contain all measurements for a specific type
+     * @return a list containing the measured values
+     */
+    public final List<Object> getDataByType(String type) {
+        return sensors.get(type);
+    }
+
+    /**
+     * Gets a list of objects that contain last numberOfMeasurements measurements for a specific type
+     * @return a list containing the last numberOfMeasurements measured values
+     */
+    public final List<Object> getDataByNumber(String type, int numberOfMeasurements) {
+        List<Object> dataByType = getDataByType(type);
+        int dataSize = dataByType.size();
+        if (numberOfMeasurements <= dataSize) {
+            return dataByType.subList(dataSize - numberOfMeasurements, dataSize);
+        }
+        return dataByType;
+    }
+
+    /**
+     * Gets a list of objects that contain the measurements withing specific dates
+     * @return a list containing the measured values within these dates
+     */
+    public final List<Object> getDataWithinDates(String type, LocalDateTime startDate, LocalDateTime endDate) {
+        List<Object> dataByType = getDataByType(type);
+        int dataSize = dataByType.size();
+        int startIndex = dataByType.indexOf(dataByType
+            .stream()
+            .filter(x -> ((SensorData) x).getDateTime().isEqual(startDate) || ((SensorData) x).getDateTime().isAfter(startDate)) 
+            .findFirst()
+            .get());
+        int endIndex = dataByType.indexOf(dataByType
+            .stream()
+            .filter(x -> ((SensorData) x).getDateTime().isEqual(endDate) || ((SensorData) x).getDateTime().isAfter(endDate))
+            .findFirst()
+            .get());
+
+        return dataByType.subList(dataSize - startIndex, dataSize - endIndex);
     }
 
     /**
@@ -1336,5 +1380,4 @@ public abstract class AbstractCore {
     public final ArrayList<Integer> getStatusRegister() {
         return statusRegister;
     }
-
 }

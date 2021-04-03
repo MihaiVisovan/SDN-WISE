@@ -26,7 +26,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ArrayBlockingQueue;
 
-
 /**
  * @author Sebastiano Milardo
  */
@@ -38,7 +37,7 @@ public interface FunctionInterface {
      * action SDN_WISE_FORWARD_UP and the corresponding ID of the function. A
      * function can be installed in a node by using the sendFunction method of a
      * controller.
-     *
+     * @param object a reference to the current mote
      * @param adcRegister an HashMap containing measurement info.
      * @param flowTable an ArrayList containing the FlowTable of the node.
      * @param neighborTable a Set containing the Neighbors table of the node.
@@ -52,14 +51,15 @@ public interface FunctionInterface {
      * @param np the NetworkPacket that triggered this function.
      */
     void function(
-            HashMap<String, List<Object>> adcRegister,
-            List<FlowTableEntry> flowTable,
-            Set<Neighbor> neighborTable,
-            ArrayList<Integer> statusRegister,
-            List<NodeAddress> acceptedId,
-            ArrayBlockingQueue<NetworkPacket> flowTableQueue,
-            ArrayBlockingQueue<NetworkPacket> txQueue,
-            byte[] args,
-            NetworkPacket np
+        Object object,
+        HashMap<String, List<Object>> adcRegister,
+        List<FlowTableEntry> flowTable,
+        Set<Neighbor> neighborTable,
+        ArrayList<Integer> statusRegister,
+        List<NodeAddress> acceptedId,
+        ArrayBlockingQueue<NetworkPacket> flowTableQueue,
+        ArrayBlockingQueue<NetworkPacket> txQueue,
+        byte[] args,
+        NetworkPacket np
     );
 }

@@ -39,23 +39,23 @@ import com.github.sdnwiselab.sdnwise.mote.standalone.SensorData;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.nio.charset.Charset;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
 import java.util.logging.Level;
-
-import javax.swing.text.StyledEditorKit.BoldAction;
 
 /**
  * @author Sebastiano Milardo
  */
 public class MoteCore extends AbstractCore {
 
-    /**
-     * Sensor measurements
-     */
-    private final static HashMap<String, List<Object>> sensors = new HashMap<String, List<Object>>();
 
     /**
      * Mote index
@@ -71,7 +71,7 @@ public class MoteCore extends AbstractCore {
      */
     public MoteCore(final byte net, final NodeAddress na,
             final Dischargeable battery, final int index) {
-        super(sensors, net, na, battery);
+        super(new HashMap<String, List<Object>>(), net, na, battery);
         this.index = index;
         addMeasurementKeys();
         new Thread(new ReadSensorData()).start();
@@ -83,7 +83,7 @@ public class MoteCore extends AbstractCore {
             File myObj = null;
             Scanner myReader = null;
             try {
-                myObj = new File("/home/mihai/sdn-wise-java/data/src/main/resources/sensor_data_" + index + ".txt");
+                myObj = new File("/home/mihai/Desktop/SDNWise/SDN-WISE/data/src/main/resources/sensor_data_" + index + ".txt");
                 myReader = new Scanner(myObj);
                 
               } catch (FileNotFoundException e) {
@@ -95,34 +95,32 @@ public class MoteCore extends AbstractCore {
             {
                 String data = myReader.nextLine();
                 String[] splittedData = data.split("\t");
-                String date = splittedData[0];
-                String time = splittedData[1];
-                String epoch = splittedData[2];
-                String temperature = splittedData[4];
-                String humidity = splittedData[5];
-                String light = splittedData[6];
-                String voltage = splittedData[7];
+                LocalDate datePart = LocalDate.parse(splittedData[0]);
+                LocalTime timePart = LocalTime.parse(splittedData[1]);
+                LocalDateTime dateTime = LocalDateTime.of(datePart, timePart);
 
-                Object o1 = new SensorData("temperature", temperature, date, time, epoch);
-                Object o2 = new SensorData("humidity", humidity, date, time, epoch);
-                Object o3 = new SensorData("light", light, date, time, epoch);
-                Object o4 = new SensorData("voltage", voltage, date, time, epoch);
+                int epoch = Integer.parseInt(splittedData[3]);
+                double temperature = Double.parseDouble(splittedData[4]);
+                double humidity = Double.parseDouble(splittedData[5]);
+                double light = Double.parseDouble(splittedData[6]);
+                double voltage = Double.parseDouble(splittedData[7]);
 
-            
-                sensors.get("temperature").add(o1);
-                sensors.get("humidity").add(o2);
-                sensors.get("light").add(o3);
-                sensors.get("voltage").add(o4);
+                Object o1 = new SensorData("temperature", temperature, dateTime, epoch);
+                Object o2 = new SensorData("humidity", humidity, dateTime, epoch);
+                Object o3 = new SensorData("light", light, dateTime, epoch);
+                Object o4 = new SensorData("voltage", voltage, dateTime, epoch);
 
-                // System.out.println("Index: " + index + " measured values: " + sensors.get("temperature") + '\n');
+                getSensors().get("temperature").add(o1);
+                getSensors().get("humidity").add(o2);
+                getSensors().get("light").add(o3);
+                getSensors().get("voltage").add(o4);
 
                 try {
                     Thread.sleep(31000);
                 } 
                 catch (InterruptedException e) 
                 {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
+                    System.out.println("The measurement reader thread has failed");
                 }
             }
             myReader.close();
@@ -130,10 +128,10 @@ public class MoteCore extends AbstractCore {
     }
 
     public final void addMeasurementKeys(){
-        this.sensors.put("temperature", new ArrayList());
-        this.sensors.put("humidity", new ArrayList());
-        this.sensors.put("light", new ArrayList());
-        this.sensors.put("voltage", new ArrayList());
+        getSensors().put("temperature", new ArrayList<Object>());
+        getSensors().put("humidity", new ArrayList<Object>());
+        getSensors().put("light", new ArrayList<Object>());
+        getSensors().put("voltage", new ArrayList<Object>());
     }
 
     @Override
@@ -152,15 +150,18 @@ public class MoteCore extends AbstractCore {
                     .setTtl((byte) getRuleTtl());
             runFlowMatch(dp);
         } else {
-            getFunctions().get(1).function(getSensors(),
-                    getFlowTable(),
-                    getNeighborTable(),
-                    getStatusRegister(),
-                    getAcceptedId(),
-                    getFtQueue(),
-                    getTxQueue(),
-                    new byte[0],
-                    dp);
+            getFunctions().get(1).function(
+                this,
+                getSensors(),
+                getFlowTable(),
+                getNeighborTable(),
+                getStatusRegister(),
+                getAcceptedId(),
+                getFtQueue(),
+                getTxQueue(),
+                new byte[0],
+                dp
+            );
         }
     }
 

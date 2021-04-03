@@ -439,7 +439,6 @@ public final class ControllerGui extends javax.swing.JFrame {
         );
 
         jTabbedPane1.getAccessibleContext().setAccessibleName("Query Node");
-
         pack();
     }// </editor-fold>//GEN-END:initComponents
 

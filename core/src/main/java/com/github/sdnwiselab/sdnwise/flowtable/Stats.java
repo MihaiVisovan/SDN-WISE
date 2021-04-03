@@ -127,11 +127,11 @@ public final class Stats implements FlowTableInterface {
 
     @Override
     public String toString() {
-        if (getTtl() == ENTRY_TTL_PERMANENT) {
+        // if (getTtl() == ENTRY_TTL_PERMANENT) {
             return "TTL: PERM, U: " + getCounter();
-        } else {
-            return "TTL: " + getTtl() + ", U: " + getCounter();
-        }
+        // } else {
+            // return "TTL: " + getTtl() + ", U: " + getCounter();
+        // }
     }
 
     @Override
