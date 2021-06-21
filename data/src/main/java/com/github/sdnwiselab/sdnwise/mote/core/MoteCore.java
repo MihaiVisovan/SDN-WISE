@@ -38,6 +38,7 @@ import com.github.sdnwiselab.sdnwise.mote.standalone.SensorData;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.Serializable;
 import java.nio.charset.Charset;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -49,14 +50,18 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
+import java.util.Set;
 import java.util.logging.Level;
 
 /**
  * @author Sebastiano Milardo
  */
-public class MoteCore extends AbstractCore {
+public class MoteCore extends AbstractCore implements Serializable {
 
-
+    /**
+     *
+     */
+    private static final long serialVersionUID = 1L;
     /**
      * Mote index
      */
@@ -141,8 +146,8 @@ public class MoteCore extends AbstractCore {
     }
 
     @Override
-    public final void dataCallback(final DataPacket dp) {
-        if (getFunctions().get(1) == null) {
+    public final void dataCallback(final DataPacket dp) { 
+        if (getFunctions().isEmpty()) {
             log(Level.INFO, new String(dp.getData(),
                     Charset.forName("UTF-8")));
             dp.setSrc(getMyAddress())
@@ -150,18 +155,21 @@ public class MoteCore extends AbstractCore {
                     .setTtl((byte) getRuleTtl());
             runFlowMatch(dp);
         } else {
-            getFunctions().get(1).function(
-                this,
-                getSensors(),
-                getFlowTable(),
-                getNeighborTable(),
-                getStatusRegister(),
-                getAcceptedId(),
-                getFtQueue(),
-                getTxQueue(),
-                new byte[0],
-                dp
-            );
+            Set<Integer> keys = getFunctions().keySet();
+            for(Integer key: keys) {
+                getFunctions().get(key).function(
+                    this,
+                    getSensors(),
+                    getFlowTable(),
+                    getNeighborTable(),
+                    getStatusRegister(),
+                    getAcceptedId(),
+                    getFtQueue(),
+                    getTxQueue(),
+                    new byte[0],
+                    dp
+                );
+            }
         }
     }
 

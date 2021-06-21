@@ -92,10 +92,12 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -1348,19 +1350,18 @@ public abstract class AbstractCore {
      */
     public final List<Object> getDataWithinDates(String type, LocalDateTime startDate, LocalDateTime endDate) {
         List<Object> dataByType = getDataByType(type);
-        int dataSize = dataByType.size();
-        int startIndex = dataByType.indexOf(dataByType
+        
+        List<Object> filteredData = dataByType
             .stream()
-            .filter(x -> ((SensorData) x).getDateTime().isEqual(startDate) || ((SensorData) x).getDateTime().isAfter(startDate)) 
-            .findFirst()
-            .get());
-        int endIndex = dataByType.indexOf(dataByType
-            .stream()
-            .filter(x -> ((SensorData) x).getDateTime().isEqual(endDate) || ((SensorData) x).getDateTime().isAfter(endDate))
-            .findFirst()
-            .get());
+            .filter(x -> checkDates(x, startDate, endDate))
+            .collect(Collectors.toList());
 
-        return dataByType.subList(dataSize - startIndex, dataSize - endIndex);
+        return filteredData;
+    }
+
+    public final boolean checkDates(Object x, LocalDateTime startDate, LocalDateTime endDate) {
+        return (((SensorData) x).getDateTime().isAfter(startDate) || ((SensorData) x).getDateTime().isEqual(startDate))
+        && (((SensorData) x).getDateTime().isBefore(endDate) || ((SensorData) x).getDateTime().isEqual(endDate));
     }
 
     /**

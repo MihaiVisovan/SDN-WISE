@@ -137,7 +137,11 @@ public class ConfigPacket extends NetworkPacket {
             }
         } else {
             for (int i = 0; i < bytes.length; i++) {
-                setPayloadAt(bytes[i], i + 1);
+                if ( i == 386 ) {
+                    setPayloadAt(bytes[i], i + 1);
+                } else {
+                    setPayloadAt(bytes[i], i + 1);
+                }
             }
         }
         return this;

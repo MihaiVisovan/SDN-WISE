@@ -31,8 +31,9 @@ public class RequestPacket extends NetworkPacket {
      * Indexes and lengths of the fields.
      */
     private static final byte ID_INDEX = 0, PART_INDEX = 1,
-            REQUEST_HEADER_SIZE = 3,
-            REQUEST_PAYLOAD_SIZE = NetworkPacket.MAX_PACKET_LENGTH
+            REQUEST_HEADER_SIZE = 3;
+            
+    private static final int REQUEST_PAYLOAD_SIZE = NetworkPacket.MAX_PACKET_LENGTH
             - (DFLT_HDR_LEN + REQUEST_HEADER_SIZE), TOTAL_INDEX = 2;
 
     /**

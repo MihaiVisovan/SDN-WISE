@@ -1,8 +1,9 @@
 package com.github.sdnwiselab.sdnwise.mote.standalone;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
-public class SensorData {
+public class SensorData implements Serializable{
     
     public final LocalDateTime dateTime;
     public final String type;

@@ -180,24 +180,32 @@ public final class SdnWise {
              * tells node 3 to execute this function when it receives a packet
              * directed to node 8.
              */
-            controller.addNodeFunction(
-                    (byte) 1,
-                    new NodeAddress("0.8"),
-                    (byte) 1,
-                    "DataManager.class");
-
             // controller.addNodeFunction(
-            //         (byte) 1,
-            //         new NodeAddress("0.3"),
-            //         (byte) 1,
-            //         "HelloWorld.class");
+            //     (byte) 1,
+            //     new NodeAddress("0.8"),
+            //     (byte) 1,
+            //     "DataManager.class");
 
-            // FlowTableEntry e1 = FlowTableEntry.fromString(
-            //         "if (P.DST == 8) {"
-            //         // + " FUNCTION 1 9 8 7 6 5 4;"
-            //         + " FORWARD_U 8;"
-            //         + "}");
-            // controller.addNodeRule((byte) 1, new NodeAddress("0.3"), e1);
+            controller.addNodeFunction(
+                (byte) 1,
+                new NodeAddress("0.3"),
+                (byte) 2,
+                "DataManager.class");
+
+            controller.addNodeFunction(
+                (byte) 1,
+                new NodeAddress("0.3"),
+                (byte) 3,
+                "HelloWorld.class");
+    
+
+            FlowTableEntry e1 = FlowTableEntry.fromString(
+                "if (P.DST == 8) {"
+                + " FUNCTION 3 9 8 7 6 5 4;"
+                + " FORWARD_U 8;"
+                + "}");
+
+            controller.addNodeRule((byte) 1, new NodeAddress("0.3"), e1);
         }
         // You can verify the behaviour of the node  using the GUI
         java.awt.EventQueue.invokeLater(() -> {

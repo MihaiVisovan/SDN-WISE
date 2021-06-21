@@ -34,7 +34,7 @@ public class NetworkPacket implements Cloneable {
     /**
      * The maximum length of a NetworkPAcket.
      */
-    public static final byte MAX_PACKET_LENGTH = 116;
+    public static final int MAX_PACKET_LENGTH = 255;
 
     /**
      * The indexes of the different fields in the packet.
@@ -117,7 +117,7 @@ public class NetworkPacket implements Cloneable {
         return (Byte.toUnsignedInt(data[NET_INDEX]) < THRES);
     }
 
-    /**
+    /**MAX_PACKET_LENGTH
      * Returns a string representation of a byte of the header.
      *
      * @param b an integer representing the index of a byte in the header
@@ -642,6 +642,10 @@ public class NetworkPacket implements Cloneable {
         if (DFLT_HDR_LEN + i < MAX_PACKET_LENGTH) {
             data[DFLT_HDR_LEN + i] = d;
             if ((i + DFLT_HDR_LEN) >= getLen()) {
+                byte ceva = (byte) (DFLT_HDR_LEN + i + 1);
+                if (Byte.toUnsignedInt(ceva) == 0) {
+                    System.out.println(d);
+                }
                 setLen((byte) (DFLT_HDR_LEN + i + 1));
             }
         } else {

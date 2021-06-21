@@ -1,0 +1,2 @@
+1. Sa transform send text-u in 'get data from node 3'
+2. Sa iau datele de la nodul 3, sa le transmit controlller-ului si sa le afisez pe ecran
