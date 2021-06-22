@@ -32,6 +32,8 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.net.InetSocketAddress;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -163,9 +165,9 @@ public final class SdnWise {
             Logger.getGlobal().log(Level.SEVERE, null, ex);
         }
         startAdaptation(conf);
-
+        List<Mote> motes;
         if (EMULATED) {
-            startVirtualNetwork();
+            motes = startVirtualNetwork();
 
             // Wait for the nodes to be discovered
             try {
@@ -208,7 +210,7 @@ public final class SdnWise {
         }
         // You can verify the behaviour of the node  using the GUI
         java.awt.EventQueue.invokeLater(() -> {
-            new ControllerGui(controller).setVisible(true);
+            new ControllerGui(controller, motes).setVisible(true);
         });
     }
 
@@ -236,7 +238,8 @@ public final class SdnWise {
      * neighbor, which is listening on localhost:7771 and the rssi between 0.0
      * and 0.1 is 215.
      */
-    public static void startVirtualNetwork() {
+    public static List<Mote> startVirtualNetwork() {
+        ArrayList<Mote> motes = new ArrayList<>();
         
         Thread th = new Thread(new Sink(
                 // its own id
@@ -256,8 +259,11 @@ public final class SdnWise {
         );
         th.start();
 
+        Mote mote = null;
+
         for (int i = 2; i <= NO_OF_MOTES; i++) {
-            new Thread(new Mote(
+            new Thread(
+                mote = new Mote(
                     // its own id
                     (byte) 1,
                     // its own address
@@ -270,8 +276,12 @@ public final class SdnWise {
                     "FINEST",
                     // index
                     i
-                    )).start();
+                )
+            )
+            .start();
+            motes.add(mote);
         }
+        return motes;
     }
 
     /**

@@ -40,14 +40,15 @@ public class Mote extends AbstractMote {
      * @param neighboursPath the path to the file containing neighbours info
      * @param logLevel log level of the logger of the node
      */
-    public Mote(
-            final byte net,
-            final NodeAddress myAddress,
-            final int port,
-            final String neighboursPath,
-            final String logLevel,
-            final int index
-            ) {
+    public Mote ( 
+        final byte net,
+        final NodeAddress myAddress,
+        final int port,
+        final String neighboursPath,
+        final String logLevel,
+        final int index
+    ) 
+    {
         super(port, neighboursPath, logLevel);
         Dischargeable battery = new Battery();
         setCore(new MoteCore(net, myAddress, battery, index)).start();
