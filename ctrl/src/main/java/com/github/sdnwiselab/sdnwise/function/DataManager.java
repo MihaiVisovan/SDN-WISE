@@ -8,6 +8,8 @@ import com.github.sdnwiselab.sdnwise.packet.NetworkPacket;
 import com.github.sdnwiselab.sdnwise.util.Neighbor;
 import com.github.sdnwiselab.sdnwise.util.NodeAddress;
 
+import org.graphstream.stream.SinkAdapter;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
@@ -27,6 +29,7 @@ public class DataManager implements FunctionInterface {
 
     @Override
     public final void function(
+        final NodeAddress sinkAddress,
         final Object object,
         final HashMap<String, List<Object>> adcRegister,
         final List<FlowTableEntry> flowTable,
@@ -47,10 +50,10 @@ public class DataManager implements FunctionInterface {
         System.out.println("Data manager calllled");
         
         // send the data to sink and then to the controller
-        sendData(dataWithinDates.subList(0, 1), np);
+        sendData(dataWithinDates.subList(0, 1), np, sinkAddress);
     }
 
-    public final void sendData(List<Object> data, NetworkPacket np) {
+    public final void sendData(List<Object> data, NetworkPacket np, NodeAddress sinkAddress) {
 
         data.forEach(x -> {
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
@@ -67,12 +70,8 @@ public class DataManager implements FunctionInterface {
             }
             byte[] payload = bos.toByteArray();
     
-            DataPacket dp = new DataPacket(np.getNet(), np.getSrc(), np.getDst(), payload);
-
-            
-
-            // dp.setNxh(np.getSrc());
-            // controller.sendNetworkPacket(dp);
+            // send the data packet to the sink, where 'dst' in the form is actually the source of the packet
+            DataPacket dp = new DataPacket(np.getNet(), np.getSrc(), sinkAddress, payload);
         });
     }
 }

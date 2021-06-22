@@ -373,4 +373,8 @@ public abstract class AbstractMote implements Runnable {
         core = cr;
         return core;
     }
+
+    public byte[] getBuf() {
+        return buf;
+    }
 }

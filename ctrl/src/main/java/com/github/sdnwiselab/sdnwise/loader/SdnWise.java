@@ -197,14 +197,13 @@ public final class SdnWise {
                 new NodeAddress("0.3"),
                 (byte) 3,
                 "HelloWorld.class");
-    
 
             FlowTableEntry e1 = FlowTableEntry.fromString(
                 "if (P.DST == 8) {"
                 + " FUNCTION 3 9 8 7 6 5 4;"
                 + " FORWARD_U 8;"
                 + "}");
-
+            
             controller.addNodeRule((byte) 1, new NodeAddress("0.3"), e1);
         }
         // You can verify the behaviour of the node  using the GUI

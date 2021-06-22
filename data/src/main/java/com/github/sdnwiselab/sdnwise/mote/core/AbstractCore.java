@@ -221,7 +221,7 @@ public abstract class AbstractCore {
     }
 
     /**
-     * Creates the core of the node without sensor measurements
+     * Creates the core of the node with sensor measurements
      *
      * @param sensors sensor measurements of the node
      * @param net Network ID of the node
@@ -626,10 +626,10 @@ public abstract class AbstractCore {
                     if (srvI != null) {
 
                         log(Level.INFO, "Function called: " + myAddress);
-                        srvI.function(this, sensors, flowTable, neighborTable,
+                        srvI.function(getActualSinkAddress(), this, sensors, flowTable, neighborTable,
                                 statusRegister, acceptedId, ftQueue, txQueue,
                                 ftac.getArgs(), np);
-                    }
+                    } 
                     break;
                 case ASK:
                     RequestPacket[] rps = RequestPacket.createPackets(
@@ -1321,6 +1321,20 @@ public abstract class AbstractCore {
      */
     public final HashMap<String, List<Object>> getSensors() {
         return sensors;
+    }
+
+
+    /**
+     * Gets an HashMap that can be used to simulate the behaviour of a set of
+     * sensors.
+     * @return an HashMap containing the measured values
+     */
+    public final void addSensorData(byte array[]) {
+        System.out.println("the data is cooomiiingggg" +  array);
+        // getSensors().put("temperature", new ArrayList<Object>());
+        // getSensors().put("humidity", new ArrayList<Object>());
+        // getSensors().put("light", new ArrayList<Object>());
+        // getSensors().put("voltage", new ArrayList<Object>());
     }
 
     /**

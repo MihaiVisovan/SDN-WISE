@@ -113,6 +113,8 @@ public final class ControllerGui extends javax.swing.JFrame {
         jButtonAddAccepted = new javax.swing.JButton();
         jButtonRemoveAccepted = new javax.swing.JButton();
         jButtonReadAccepted = new javax.swing.JButton();
+        jTextFieldReadData = new javax.swing.JTextField();
+        jButtonReadData = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("SDN-WISE");
@@ -128,6 +130,13 @@ public final class ControllerGui extends javax.swing.JFrame {
         jSpinnerAddrH.setModel(new javax.swing.SpinnerNumberModel(0, 0, 255, 1));
 
         jPanel4.setBorder(javax.swing.BorderFactory.createTitledBorder("Send a Data Packet"));
+
+        jButtonReadData.setText("Read Data");
+        jButtonReadData.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonReadDataActionPerformed(evt);
+            }
+        });
 
         jButtonAddAccepted1.setText("Send");
         jButtonAddAccepted1.addActionListener(new java.awt.event.ActionListener() {
@@ -148,6 +157,14 @@ public final class ControllerGui extends javax.swing.JFrame {
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(jButtonAddAccepted1)))
                 .addContainerGap())
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jTextFieldReadData)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(jButtonReadData)))
+                .addContainerGap()) 
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -156,6 +173,12 @@ public final class ControllerGui extends javax.swing.JFrame {
                 .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButtonAddAccepted1)
+                .addContainerGap())
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jTextFieldReadData, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jButtonReadData)
                 .addContainerGap())
         );
 
@@ -688,6 +711,20 @@ public final class ControllerGui extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_jButtonAddAccepted1ActionPerformed
 
+    private void jButtonReadDataActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonAddAccepted1ActionPerformed
+
+        try {
+            // get sink address to where all the data was sent
+            NodeAddress src = controller.getSinkAddress();
+
+            
+
+            jTextFieldReadData.setText("you can read data boy");
+        } catch (Exception ex) {
+            Logger.getGlobal().log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_jButtonAddAccepted1ActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButtonAddAccepted;
     private javax.swing.JButton jButtonAddAccepted1;
@@ -697,6 +734,7 @@ public final class ControllerGui extends javax.swing.JFrame {
     private javax.swing.JButton jButtonRemoveAccepted;
     private javax.swing.JButton jButtonRemoveFlow;
     private javax.swing.JButton jButtonWriteParams;
+    private javax.swing.JButton jButtonReadData;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -721,5 +759,7 @@ public final class ControllerGui extends javax.swing.JFrame {
     private javax.swing.JTable jTableAccepted;
     private javax.swing.JTable jTableFlow;
     private javax.swing.JTextField jTextField1;
+    private javax.swing.JTextField jTextFieldReadData;
+
     // End of variables declaration//GEN-END:variables
 }

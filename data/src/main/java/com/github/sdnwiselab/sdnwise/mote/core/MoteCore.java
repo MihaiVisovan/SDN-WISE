@@ -158,6 +158,7 @@ public class MoteCore extends AbstractCore implements Serializable {
             Set<Integer> keys = getFunctions().keySet();
             for(Integer key: keys) {
                 getFunctions().get(key).function(
+                    getActualSinkAddress(),
                     this,
                     getSensors(),
                     getFlowTable(),

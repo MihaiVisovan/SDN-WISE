@@ -37,6 +37,7 @@ public interface FunctionInterface {
      * action SDN_WISE_FORWARD_UP and the corresponding ID of the function. A
      * function can be installed in a node by using the sendFunction method of a
      * controller.
+     * @param sinkAddress sink address
      * @param object a reference to the current mote
      * @param adcRegister an HashMap containing measurement info.
      * @param flowTable an ArrayList containing the FlowTable of the node.
@@ -51,6 +52,7 @@ public interface FunctionInterface {
      * @param np the NetworkPacket that triggered this function.
      */
     void function(
+        NodeAddress sinkAddress,
         Object object,
         HashMap<String, List<Object>> adcRegister,
         List<FlowTableEntry> flowTable,

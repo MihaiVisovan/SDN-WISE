@@ -58,7 +58,7 @@ public class SinkCore extends AbstractCore {
             = new ArrayBlockingQueue<>(QUEUE_SIZE);
 
     /**
-     * Creates a new Sink node. The Sink node is the only node directly conneted
+     * Creates a new Sink node. The Sink node is the only node directly connected
      * to the control plane.
      *
      * @param net Network ID of the packet
