@@ -126,9 +126,11 @@ public final class ControllerGui extends javax.swing.JFrame {
         jButtonAddAccepted = new javax.swing.JButton();
         jButtonRemoveAccepted = new javax.swing.JButton();
         jButtonReadAccepted = new javax.swing.JButton();
-        jTextFieldReadData = new javax.swing.JTextField();
+        jTextAreaReadData = new javax.swing.JTextArea();
         jButtonReadData = new javax.swing.JButton();
         jPanelReadData = new javax.swing.JPanel();
+        jScrollPaneReadData = new javax.swing.JScrollPane();
+        jTextFieldReadData = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("SDN-WISE");
@@ -431,36 +433,32 @@ public final class ControllerGui extends javax.swing.JFrame {
 
         jTabbedPane1.addTab("Node Aliases", jPanel3);
 
+        jScrollPaneReadData.setViewportView(jTextAreaReadData);
+
         javax.swing.GroupLayout jPanelReadDataLayout = new javax.swing.GroupLayout(jPanelReadData);
         jPanelReadData.setLayout(jPanelReadDataLayout);
         jPanelReadDataLayout.setHorizontalGroup(
             jPanelReadDataLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanelReadDataLayout.createSequentialGroup()
                 .addContainerGap()
+                .addComponent(jTextFieldReadData, javax.swing.GroupLayout.DEFAULT_SIZE, 200, Short.MAX_VALUE)
+                .addContainerGap()
                 .addGroup(jPanelReadDataLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jTextFieldReadData)
+                    .addComponent(jScrollPaneReadData, javax.swing.GroupLayout.DEFAULT_SIZE, 474, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanelReadDataLayout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(jButtonReadData)))
                 .addContainerGap())
-            .addGroup(jPanelReadDataLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanelReadDataLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanelReadDataLayout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)))
-                .addContainerGap()) 
         );
         jPanelReadDataLayout.setVerticalGroup(
             jPanelReadDataLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanelReadDataLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jTextFieldReadData)
+                .addComponent(jTextFieldReadData, javax.swing.GroupLayout.DEFAULT_SIZE, 50, Short.MAX_VALUE)
+                .addContainerGap()
+                .addComponent(jScrollPaneReadData, javax.swing.GroupLayout.DEFAULT_SIZE, 274, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButtonReadData)
-                .addContainerGap())
-            .addGroup(jPanelReadDataLayout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addContainerGap())
         );
 
@@ -761,22 +759,27 @@ public final class ControllerGui extends javax.swing.JFrame {
     private void jButtonReadDataActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonAddAccepted1ActionPerformed
 
         try {
-            // get sink address to where all the data was sent
-            NodeAddress src = controller.getSinkAddress();
-            HashMap<String, List<Object>> motesTemperature = new HashMap<String, List<Object>>();
-            for(Mote mote: motes) {
-                LocalDateTime dateTimeOne = LocalDateTime.parse("2004-01-13T23:45:24.22222");
-                LocalDateTime dateTimeTwo = LocalDateTime.parse("2004-05-13T23:47:12.34567");
-                List<Object> dataWithinDates = mote.getCore().getDataWithinDates("temperature", dateTimeOne, dateTimeTwo);
-                motesTemperature.put(mote.getCore().getMyAddress().toString(), dataWithinDates);
-            }
+            // get user query
+            String query = jTextFieldReadData.getText();
 
-            for (Entry<String, List<Object>> entry : motesTemperature.entrySet()) {
-                String moteId = entry.getKey();
+            // send the query and motes to data manager
+            DataManager dataManager = new DataManager(controller, motes);
+
+            // process the query 
+            List<String> processedQuery = dataManager.processQuery(query);
+            List<String> requestedMotes = dataManager.getRequestedMotes(query);
+
+
+            // after processing the query, get the final data
+            HashMap<List<String>, List<Object>> motesData = dataManager.getMotesData(processedQuery, requestedMotes);
+
+            for (Entry<List<String>, List<Object>> entry : motesData.entrySet()) {
+                String moteId = entry.getKey().get(0);
+                String measurementType = entry.getKey().get(1);
+
                 List<Object> moteTemperatures = entry.getValue();
-                jTextFieldReadData.setText(jTextFieldReadData.getText() + " Mote ID: " + moteId + "    Temperature: " + moteTemperatures + '\n'); 
+                jTextAreaReadData.append(" Mote ID: " + moteId + " -> " + measurementType + ": " + moteTemperatures + "\n \n");
             }
-
             
         } catch (Exception ex) {
             Logger.getGlobal().log(Level.SEVERE, null, ex);
@@ -807,6 +810,7 @@ public final class ControllerGui extends javax.swing.JFrame {
     private javax.swing.JPanel jPanelReadData;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPaneReadData;
     private javax.swing.JSpinner jSpinnerAddrH;
     private javax.swing.JSpinner jSpinnerAddrL;
     private javax.swing.JSpinner jSpinnerBeacon;
@@ -819,6 +823,7 @@ public final class ControllerGui extends javax.swing.JFrame {
     private javax.swing.JTable jTableFlow;
     private javax.swing.JTextField jTextField1;
     private javax.swing.JTextField jTextFieldReadData;
+    private javax.swing.JTextArea jTextAreaReadData;
 
     // End of variables declaration//GEN-END:variables
 }
