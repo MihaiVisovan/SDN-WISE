@@ -106,19 +106,19 @@ public class MoteCore extends AbstractCore implements Serializable {
 
                 int epoch = Integer.parseInt(splittedData[3]);
                 double temperature = Double.parseDouble(splittedData[4]);
-                double humidity = Double.parseDouble(splittedData[5]);
+                double humiditiy = Double.parseDouble(splittedData[5]);
                 double light = Double.parseDouble(splittedData[6]);
                 double voltage = Double.parseDouble(splittedData[7]);
 
-                Object o1 = new SensorData("temperature", temperature, dateTime, epoch);
-                Object o2 = new SensorData("humidity", humidity, dateTime, epoch);
-                Object o3 = new SensorData("light", light, dateTime, epoch);
-                Object o4 = new SensorData("voltage", voltage, dateTime, epoch);
+                Object o1 = new SensorData("TEMPERATURE", temperature, dateTime, epoch);
+                Object o2 = new SensorData("HUMIDITIY", humiditiy, dateTime, epoch);
+                Object o3 = new SensorData("LIGHT", light, dateTime, epoch);
+                Object o4 = new SensorData("VOLTAGE", voltage, dateTime, epoch);
 
-                getSensors().get("temperature").add(o1);
-                getSensors().get("humidity").add(o2);
-                getSensors().get("light").add(o3);
-                getSensors().get("voltage").add(o4);
+                getSensors().get("TEMPERATURE").add(o1);
+                getSensors().get("HUMIDITIY").add(o2);
+                getSensors().get("LIGHT").add(o3);
+                getSensors().get("VOLTAGE").add(o4);
 
                 try {
                     Thread.sleep(31000);
@@ -133,10 +133,10 @@ public class MoteCore extends AbstractCore implements Serializable {
     }
 
     public final void addMeasurementKeys(){
-        getSensors().put("temperature", new ArrayList<Object>());
-        getSensors().put("humidity", new ArrayList<Object>());
-        getSensors().put("light", new ArrayList<Object>());
-        getSensors().put("voltage", new ArrayList<Object>());
+        getSensors().put("TEMPERATURE", new ArrayList<Object>());
+        getSensors().put("HUMIDITIY", new ArrayList<Object>());
+        getSensors().put("LIGHT", new ArrayList<Object>());
+        getSensors().put("VOLTAGE", new ArrayList<Object>());
     }
 
     @Override

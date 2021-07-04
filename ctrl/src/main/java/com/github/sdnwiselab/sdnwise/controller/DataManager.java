@@ -1,11 +1,13 @@
 package com.github.sdnwiselab.sdnwise.controller;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.time.format.DateTimeFormatter;
 
 import com.github.sdnwiselab.sdnwise.mote.standalone.Mote;
 
@@ -28,7 +30,7 @@ public class DataManager {
      */    
     private List<Mote> motes;
 
-    public HashMap<List<String>, List<Object>> motesData;
+    public HashMap<List<String>, List<Object>> motesData = new HashMap<>();
 
     /**
      * The Controller managed by this ui.
@@ -45,39 +47,41 @@ public class DataManager {
         List<String> processedQuery = new ArrayList<String>();
         // check measurement type
         if(query.contains(TEMPERATURE.toLowerCase())) {
-            processedQuery.add(0, TEMPERATURE);
+            processedQuery.add(TEMPERATURE);
         }
         if(query.contains(HUMIDITY.toLowerCase())) {
-            processedQuery.add(0, HUMIDITY);
+            processedQuery.add(HUMIDITY);
         }
         if(query.contains(LIGHT.toLowerCase())) {
-            processedQuery.add(0, LIGHT);
+            processedQuery.add(LIGHT);
         }
         if(query.contains(VOLTAGE.toLowerCase())) {
-            processedQuery.add(0, VOLTAGE);
+            processedQuery.add(VOLTAGE);
         }
 
         // check operation type
         if(query.contains(SUM.toLowerCase())) {
-            processedQuery.add(1, SUM);
+            processedQuery.add(SUM);
         }
         if(query.contains(AVERAGE.toLowerCase())) {
-            processedQuery.add(1, AVERAGE);
+            processedQuery.add(AVERAGE);
         }
         if(query.contains(MAXIMUM.toLowerCase())) {
-            processedQuery.add(1, MAXIMUM);
+            processedQuery.add(MAXIMUM);
         }
         if(query.contains(MINIMUM.toLowerCase())) {
-            processedQuery.add(1, MINIMUM);
+            processedQuery.add(MINIMUM);
         }
 
         // check dates range
         Pattern datePattern = Pattern.compile(DATE_REGEX);
         Matcher dateMatcher = datePattern.matcher(query);
-        processedQuery.add(2, dateMatcher.group(0));
-        processedQuery.add(3, dateMatcher.group(1));
 
-        
+        dateMatcher.find();
+        processedQuery.add(dateMatcher.group(0));
+        dateMatcher.find();
+        processedQuery.add(dateMatcher.group(0));
+
         return processedQuery;
     }
 
@@ -87,10 +91,8 @@ public class DataManager {
 
         List<String> requestedMotes = new ArrayList<String>();
         
-        int i = 0;
         while(motesMatcher.find()) {
-            requestedMotes.add("0." + motesMatcher.group(i));
-            i++;
+            requestedMotes.add("0." + motesMatcher.group(0));
         }
         return requestedMotes;
     }
@@ -100,11 +102,13 @@ public class DataManager {
         String measurementType = processedQuery.get(0);
         // LocalDateTime dateTimeOne = LocalDateTime.parse("2004-01-13T23:45:24.22222");
 
-        LocalDateTime dateTimeOne = LocalDateTime.parse(processedQuery.get(1));
-        LocalDateTime dateTimeTwo = LocalDateTime.parse(processedQuery.get(2));
+        final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDateTime dateTimeOne = LocalDate.parse(processedQuery.get(2), formatter).atStartOfDay();
+        LocalDateTime dateTimeTwo = LocalDate.parse(processedQuery.get(3), formatter).atStartOfDay();
+
 
         // TO DO: implement these math operations
-        String operationType = processedQuery.get(3);
+        String operationType = processedQuery.get(1);
 
         for(Mote mote: motes) {
             String moteAddress = mote.getCore().getMyAddress().toString();

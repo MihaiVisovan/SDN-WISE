@@ -99,6 +99,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
+
 /**
  *
  * @author Sebastiano Milardo
@@ -1364,11 +1365,14 @@ public abstract class AbstractCore {
      */
     public final List<Object> getDataWithinDates(String type, LocalDateTime startDate, LocalDateTime endDate) {
         List<Object> dataByType = getDataByType(type);
-        
-        List<Object> filteredData = dataByType
+        List<Object> filteredData = new ArrayList<Object>();
+
+        if (dataByType.size() > 0) {
+            filteredData = dataByType
             .stream()
             .filter(x -> checkDates(x, startDate, endDate))
             .collect(Collectors.toList());
+        }
 
         return filteredData;
     }
